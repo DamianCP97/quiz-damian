@@ -59,14 +59,18 @@ const preguntas = [
 //Variables globales
 let preguntaActual = 0; //Para saber en qué pregunta estás
 const introduccion = document.getElementById('introduccion');
+const mensajeFinal = document.getElementById('mensaje-final');
 const preguntaFormulario = document.getElementById('pregunta');
 const respuestasDiv = document.getElementById('respuestas');
 const botonEmpezar = document.getElementById('empezar');
 const botonResponder = document.getElementById('responder');
+const botonReiniciar = document.getElementById('reiniciar');
 
 function empezarQuiz() {
     //Ocultar botón de "Responder"
     botonResponder.style.display = 'none';
+    mensajeFinal.style.display = 'none';
+    botonReiniciar.style.display = 'none';
 
     //Crear el eventlistener para empezar el Quiz y ocultar la introducción
     botonEmpezar.addEventListener("click", function() {
@@ -85,26 +89,70 @@ function mostrarPregunta() {
 
     // Mostrar respuestas de la pregunta actual
     preguntas[preguntaActual].respuestas.forEach((respuesta, index) => {
-        const crearDiv = document.createElement('div');
+        // Crear elemento de input tipo radio
+        const radioInput = document.createElement('input');
+        radioInput.setAttribute('type', 'radio');
+        radioInput.setAttribute('name', 'quemiras'); //Establecer el mismo nombre para todos los input y que así solo se pueda seleccionar uno
+        radioInput.setAttribute('value', respuesta.respuesta); //Para asignarle el valor a cada input
+        radioInput.id = 'respuesta' + index; //Le da un ID a cada respuesta
+
+        // Crear la label para el input
+        const label = document.createElement('label');
+        label.setAttribute('for', 'respuesta' + index); //Lo que hace esto es relacionar el label con el input, para que puedas hacer click en la label y se marque el input. Es decir, si el "for" del elemento label coincide con el id del input, se quedan relacionados.
+        label.textContent = respuesta.respuesta; //Texto de la respuesta
+
+        // Agregar event listener para verificar la respuesta
+        /* radioInput.addEventListener('change', function() {
+            verificarRespuesta(respuesta);
+        }); */
+
+         // Crear contenedor para el input y la etiqueta
+        const divRespuesta = document.createElement('div');
+        divRespuesta.appendChild(radioInput);
+        divRespuesta.appendChild(label);
+
+         // Agregar contenedor al div de respuestas
+        respuestasDiv.appendChild(divRespuesta);
+
+
+        /* const crearDiv = document.createElement('div');
         crearDiv.classList.add('respuesta');
         crearDiv.innerHTML = respuesta.respuesta; //Aquí es "respuesta.respuesta" porque en el forEach se selecciona cada elemento "respuesta" (se le puede llamar como quieras, simplemente se usa para manejar las iteracciones dentro del forEach) y se muestra su "respuesta" que la que está creada en el array de objetos del principio
-        respuestasDiv.appendChild(crearDiv);
+        respuestasDiv.appendChild(crearDiv); */
 
         // Agregar nuevo event listener a cada respuesta
-        crearDiv.addEventListener('click', function() {
+        /* crearDiv.addEventListener('click', function() {
             clickRespuesta(index);
-        });
+        }); */
     });
 }
 
+//Event listener para cambiar de pregunta cada vez que se hace click el botón de "Responder"
+botonResponder.addEventListener("click", function() {
+    if (preguntaActual < preguntas.length - 1) {
+        preguntaActual++;
+        mostrarPregunta();
+    } else {
+        mensajeFinal.style.display = 'block';
+        preguntaFormulario.style.display = 'none'; //Ocultar preguntas
+        respuestasDiv.innerHTML = ''; // Borrar respuestas anteriores
+        botonResponder.style.display = 'none';
+        botonReiniciar.style.display = 'block';
+    }
+});
+
+botonReiniciar.addEventListener("click", function() {
+    location.reload();
+});
+
 // Función para manejar la respuesta
-function clickRespuesta(index) {
+/* function clickRespuesta(index) {
     const respuestaSeleccionada = preguntas[preguntaActual].respuestas[index];
     if (respuestaSeleccionada.correcta === true) {
         alert("¡Respuesta correcta!");
     } else {
         alert("Respuesta incorrecta. Intenta de nuevo.");
     }
-}
+} */
 
 empezarQuiz();
