@@ -1,13 +1,3 @@
-/*ACTUALMENTE LA RESPUESTA SE DETECTA EN EL DIV DE CADA RESPUESTA PERO ESO ESTA MAL, LO QUE SE TIENE QUE HACER ES DETECTAR LA RESPUESTA CUANDO SE PULSA EL BOTON "RESPONDER". HAY QUE INTENTAR CAMBIAR LA LOGICA PARA VER SI PODEMOS HACER QUE CUANDO SE SELECCIONE UNA RESPUESTA SE "GUARDE" EN UNA VARIABLE O ALGO ASI Y LUEGO SE PUEDA COMPROBAR SI ES CIERTA O NO CUANDO SE HACE CLICK EN EL BOTON "RESPONDER"*/
-
-/*
-1. ¿Cuál es mi marca favorita de tenis para running? (Hoka, Nike, Adidas o Saucony)
-2. ¿Qué deporte me gusta más? (Gimnasio, escalada, running o pádel)
-3. ¿Qué es lo que más me gusta en el mundo? (Comer, dormir, entrenar o jugar)
-4. ¿Cuál es una de mis comidas favoritas? (Arroz con pollo, kebab, lasaña o hamburguesa)
-5. ¿Cuál es mi estacion favorita? (Invierno, primavera, otoño o verano)
-*/
-
 const preguntas = [
     {
         pregunta:"¿Cuál es mi marca favorita de tenis para running?",
@@ -58,6 +48,7 @@ const preguntas = [
 
 //Variables globales
 let preguntaActual = 0; //Para saber en qué pregunta estás
+let aciertos = 0; //Variable para contar el número de aciertos y mostrarlo al final
 const introduccion = document.getElementById('introduccion');
 const mensajeFinal = document.getElementById('mensaje-final');
 const preguntaFormulario = document.getElementById('pregunta');
@@ -67,6 +58,9 @@ const botonResponder = document.getElementById('responder');
 const botonReiniciar = document.getElementById('reiniciar');
 
 function empezarQuiz() {
+    // Mezclar el array de preguntas de forma aleatoria
+    preguntas.sort(() => Math.random() - 0.5);
+
     //Ocultar botón de "Responder"
     botonResponder.style.display = 'none';
     mensajeFinal.style.display = 'none';
@@ -101,11 +95,6 @@ function mostrarPregunta() {
         label.setAttribute('for', 'respuesta' + index); //Lo que hace esto es relacionar el label con el input, para que puedas hacer click en la label y se marque el input. Es decir, si el "for" del elemento label coincide con el id del input, se quedan relacionados.
         label.textContent = respuesta.respuesta; //Texto de la respuesta
 
-        // Agregar event listener para verificar la respuesta
-        /* radioInput.addEventListener('change', function() {
-            verificarRespuesta(respuesta);
-        }); */
-
          // Crear contenedor para el input y la etiqueta
         const divRespuesta = document.createElement('div');
         divRespuesta.appendChild(radioInput);
@@ -114,45 +103,49 @@ function mostrarPregunta() {
          // Agregar contenedor al div de respuestas
         respuestasDiv.appendChild(divRespuesta);
 
+        // Agregar evento de escucha al botón "Responder"
+        botonResponder.addEventListener("click", function() {
+            // Obtener la respuesta seleccionada por el usuario
+            const respuestaSeleccionada = document.querySelector('input[name="quemiras"]:checked');
+            
+            // Verificar si se seleccionó alguna respuesta
+            if (respuestaSeleccionada) { //Se necesita este if porque así solo se ejecuta una vez al haber un input:checked, si se saca el código fuera del if se ejecutará una vez por cada respuesta que haya y saltan errores en la consola
+                const respuestaUsuario = respuestaSeleccionada.value;
 
-        /* const crearDiv = document.createElement('div');
-        crearDiv.classList.add('respuesta');
-        crearDiv.innerHTML = respuesta.respuesta; //Aquí es "respuesta.respuesta" porque en el forEach se selecciona cada elemento "respuesta" (se le puede llamar como quieras, simplemente se usa para manejar las iteracciones dentro del forEach) y se muestra su "respuesta" que la que está creada en el array de objetos del principio
-        respuestasDiv.appendChild(crearDiv); */
+                // Obtener la respuesta correcta
+                const respuestaCorrecta = preguntas[preguntaActual].respuestas.find(respuesta => respuesta.correcta).respuesta; //Se utiliza el método find() en lugar de filter() porque en este caso solo va a haber una respuesta correcta y el método find() devuelve el primer elemento que cumple con la condición. Si hubiese varias respuestas correctas el método find() no valdría
 
-        // Agregar nuevo event listener a cada respuesta
-        /* crearDiv.addEventListener('click', function() {
-            clickRespuesta(index);
-        }); */
+                // Comparar la respuesta del usuario con la respuesta correcta
+                if (respuestaUsuario === respuestaCorrecta) {
+                    // La respuesta es correcta
+                    console.log("¡Respuesta correcta!");
+                    aciertos++;
+                } else {
+                    // La respuesta es incorrecta
+                    console.log("Respuesta incorrecta. La respuesta correcta es: " + respuestaCorrecta);
+                }
+
+                //Cambiar de pregunta cada vez que se hace click el botón de "Responder"
+                if (preguntaActual < preguntas.length - 1) {
+                    preguntaActual++;
+                    mostrarPregunta();
+                } else {
+                    // Mostrar mensaje final y botón de reinicio
+                    mensajeFinal.style.display = 'block';
+                    mensajeFinal.innerHTML = '¡Felicidades! <br> Has conseguido completar el Quiz y tu resultado ha sido de: ';
+                    mensajeFinal.innerHTML += aciertos + '/' + preguntas.length; //Hay que ponerle el "+=" para que no se borre el texto anterior
+                    preguntaFormulario.style.display = 'none'; //Ocultar preguntas
+                    respuestasDiv.innerHTML = ''; // Borrar respuestas anteriores
+                    botonResponder.style.display = 'none';
+                    botonReiniciar.style.display = 'block';
+                }
+            }
+        });
     });
 }
-
-//Event listener para cambiar de pregunta cada vez que se hace click el botón de "Responder"
-botonResponder.addEventListener("click", function() {
-    if (preguntaActual < preguntas.length - 1) {
-        preguntaActual++;
-        mostrarPregunta();
-    } else {
-        mensajeFinal.style.display = 'block';
-        preguntaFormulario.style.display = 'none'; //Ocultar preguntas
-        respuestasDiv.innerHTML = ''; // Borrar respuestas anteriores
-        botonResponder.style.display = 'none';
-        botonReiniciar.style.display = 'block';
-    }
-});
 
 botonReiniciar.addEventListener("click", function() {
     location.reload();
 });
-
-// Función para manejar la respuesta
-/* function clickRespuesta(index) {
-    const respuestaSeleccionada = preguntas[preguntaActual].respuestas[index];
-    if (respuestaSeleccionada.correcta === true) {
-        alert("¡Respuesta correcta!");
-    } else {
-        alert("Respuesta incorrecta. Intenta de nuevo.");
-    }
-} */
 
 empezarQuiz();
