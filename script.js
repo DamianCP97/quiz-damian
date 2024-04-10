@@ -120,12 +120,7 @@ function mostrarPregunta() {
 
                 // Comparar la respuesta del usuario con la respuesta correcta
                 if (respuestaUsuario === respuestaCorrecta) {
-                    // La respuesta es correcta
-                    console.log("¡Respuesta correcta!");
                     aciertos++;
-                } else {
-                    // La respuesta es incorrecta
-                    console.log("Respuesta incorrecta. La respuesta correcta es: " + respuestaCorrecta);
                 }
 
                 //Cambiar de pregunta cada vez que se hace click el botón de "Responder"
