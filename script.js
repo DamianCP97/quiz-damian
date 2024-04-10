@@ -81,8 +81,11 @@ function mostrarPregunta() {
     preguntaFormulario.innerHTML = preguntas[preguntaActual].pregunta;
     respuestasDiv.innerHTML = ''; // Borrar respuestas anteriores
 
+    // Mezclar las respuestas de la pregunta actual de forma aleatoria
+    const respuestasAleatorias = preguntas[preguntaActual].respuestas.sort(() => Math.random() - 0.5);
+
     // Mostrar respuestas de la pregunta actual
-    preguntas[preguntaActual].respuestas.forEach((respuesta, index) => {
+    respuestasAleatorias.forEach((respuesta, index) => {
         // Crear elemento de input tipo radio
         const radioInput = document.createElement('input');
         radioInput.setAttribute('type', 'radio');
@@ -132,8 +135,19 @@ function mostrarPregunta() {
                 } else {
                     // Mostrar mensaje final y botón de reinicio
                     mensajeFinal.style.display = 'block';
-                    mensajeFinal.innerHTML = '¡Felicidades! <br> Has conseguido completar el Quiz y tu resultado ha sido de: ';
+                    mensajeFinal.innerHTML = '¡Felicidades! <br><br> Has conseguido completar el Quiz y tu resultado ha sido de: ';
                     mensajeFinal.innerHTML += aciertos + '/' + preguntas.length; //Hay que ponerle el "+=" para que no se borre el texto anterior
+                    
+                    if (aciertos === 0) {
+                        mensajeFinal.innerHTML += '<br><br>No has acertado ni una, ¿de qué vas? Debería de darte vergüenza mirarme a la cara.';
+                    } else if (aciertos > 0 && aciertos <= 2) {
+                        mensajeFinal.innerHTML += '<br><br>Te crees que me conoces pero no, siento decirte que no mereces mi respeto.';
+                    } else if (aciertos > 2 && aciertos <= 4) {
+                        mensajeFinal.innerHTML += '<br><br>No ha estado tan mal como crees, pero sigues sin conocerme a fondo. Mis gustos más profundos siguen siendo un misterio para ti.';
+                    } else if (aciertos === 5) {
+                        mensajeFinal.innerHTML += '<br><br>Eres una persona maravillosa que me conoce a la perfección. Sabes lo que pienso en todo momento y eso me asusta pero a la vez me gusta.';
+                    }
+                    
                     preguntaFormulario.style.display = 'none'; //Ocultar preguntas
                     respuestasDiv.innerHTML = ''; // Borrar respuestas anteriores
                     botonResponder.style.display = 'none';
