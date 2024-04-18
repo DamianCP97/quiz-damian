@@ -134,13 +134,13 @@ function mostrarPregunta() {
                     mensajeFinal.innerHTML += aciertos + '/' + preguntas.length; //Hay que ponerle el "+=" para que no se borre el texto anterior
                     
                     if (aciertos === 0) {
-                        mensajeFinal.innerHTML += '<br><br>No has acertado ni una, ¿de qué vas? Debería de darte vergüenza mirarme a la cara.';
+                        mensajeFinal.innerHTML += '<br><br>No has acertado ninguna. ¡Puedes hacerlo mejor!';
                     } else if (aciertos > 0 && aciertos <= 2) {
-                        mensajeFinal.innerHTML += '<br><br>Te crees que me conoces pero no, siento decirte que no mereces mi respeto.';
+                        mensajeFinal.innerHTML += '<br><br>Acertaste algunas preguntas pero puedes mejorar.';
                     } else if (aciertos > 2 && aciertos <= 4) {
-                        mensajeFinal.innerHTML += '<br><br>No ha estado tan mal como crees, pero sigues sin conocerme a fondo. Mis gustos más profundos siguen siendo un misterio para ti.';
+                        mensajeFinal.innerHTML += '<br><br>¡Casi aciertas todas!';
                     } else if (aciertos === 5) {
-                        mensajeFinal.innerHTML += '<br><br>Eres una persona maravillosa que me conoce a la perfección. Sabes lo que pienso en todo momento y eso me asusta pero a la vez me gusta.';
+                        mensajeFinal.innerHTML += '<br><br>¡Has acertado todas, felicidades!';
                     }
                     
                     preguntaFormulario.style.display = 'none'; //Ocultar preguntas
